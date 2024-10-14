@@ -1,5 +1,4 @@
 'use client'
-
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,22 +13,15 @@ import { Separator } from '@/components/ui/separator'
 import { useFormState } from '@/hooks/use-form-state'
 
 import { signInWithGithub } from '../actions'
-import { signInWithEmailAndPassword } from './actions'
+import { signUpAction } from './actions'
 
-export function SignInForm() {
-  // Como faria sem precisar do event.preventDefault
-
-  // const [{ errors, message, success }, formaction, isPending] = useActionState(
-  //   signInWithEmailAndPassword,
-  //   { success: false, message: null, errors: null },
-  // )
-
+export function SignUpForm() {
   const router = useRouter()
 
-  const [{ success, message, errors }, handleSubmit, isPending] = useFormState(
-    signInWithEmailAndPassword,
+  const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
+    signUpAction,
     () => {
-      router.push('/')
+      router.push('/auth/sign-in')
     },
   )
 
@@ -39,12 +31,22 @@ export function SignInForm() {
         {success === false && message && (
           <Alert variant="destructive">
             <AlertTriangle className="size-4" />
-            <AlertTitle>Sign in failed!</AlertTitle>
+            <AlertTitle>Sign up failed!</AlertTitle>
             <AlertDescription>
               <p>{message}</p>
             </AlertDescription>
           </Alert>
         )}
+
+        <div className="space-y-1">
+          <Label htmlFor="name">Name</Label>
+          <Input name="name" id="name" />
+          {errors?.name && (
+            <p className="text-xs font-medium text-red-500 dark:text-red-400">
+              {errors.name[0]}
+            </p>
+          )}
+        </div>
 
         <div className="space-y-1">
           <Label htmlFor="email">E-mail</Label>
@@ -64,41 +66,41 @@ export function SignInForm() {
               {errors.password[0]}
             </p>
           )}
+        </div>
 
-          <Link
-            href="/auth/forgot-password"
-            className="text-xs font-medium text-foreground hover:underline"
-          >
-            Forgot your password?
-          </Link>
+        <div className="space-y-1">
+          <Label htmlFor="password_confirmation">Confirm your password</Label>
+          <Input
+            name="password_confirmation"
+            type="password"
+            id="password_confirmation"
+          />
+          {errors?.password_confirmation && (
+            <p className="text-xs font-medium text-red-500 dark:text-red-400">
+              {errors.password_confirmation[0]}
+            </p>
+          )}
         </div>
 
         <Button className="w-full" type="submit" disabled={isPending}>
           {isPending ? (
-            <Loader2 className="size 4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
-            'Sign in with e-mail'
+            'Create account'
           )}
         </Button>
 
-        <Button
-          className="w-full"
-          variant="link"
-          type="submit"
-          size="sm"
-          asChild
-        >
-          <Link href="/auth/sign-up">
-            Not registered yet? Create an account
-          </Link>
+        <Button className="w-full" variant="link" size="sm" asChild>
+          <Link href="/auth/sign-in">Already registered? Sign In</Link>
         </Button>
       </form>
+
       <Separator />
 
       <form action={signInWithGithub}>
         <Button type="submit" className="w-full" variant="outline">
           <Image src={githubIcon} alt="" className="mr-2 size-4 dark:invert" />
-          Sign in with GitHub
+          Sign up with GitHub
         </Button>
       </form>
     </div>
