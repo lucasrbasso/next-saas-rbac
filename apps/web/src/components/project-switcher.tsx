@@ -19,7 +19,11 @@ import {
 } from './ui/dropdown-menu'
 import { Skeleton } from './ui/skeleton'
 
-export function ProjectSwitcher() {
+export function ProjectSwitcher({
+  canCreateProject,
+}: {
+  canCreateProject: boolean
+}) {
   const { slug: orgSlug, project: projectSlug } = useParams<{
     slug: string
     project: string
@@ -96,12 +100,14 @@ export function ProjectSwitcher() {
             })}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={`/org/${orgSlug}/create-project`}>
-            <PlusCircle className="mr-2 size-4" />
-            Create new
-          </Link>
-        </DropdownMenuItem>
+        {canCreateProject && (
+          <DropdownMenuItem asChild>
+            <Link href={`/org/${orgSlug}/create-project`}>
+              <PlusCircle className="mr-2 size-4" />
+              Create new
+            </Link>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )
